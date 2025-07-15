@@ -1,0 +1,9 @@
+import * as dotenv from "dotenv";
+dotenv.config({path:"../.env"});
+
+export const config = {
+    mongoDbURI: String(process.env.MONGODB_URI),
+    port:String(process.env.PORT),
+    accessTokenSecret:String(process.env.JWT_ACCESS_TOKEN_SECRET),
+    accessTokenExpiryDate:String(process.env.JWT_ACCESS_TOKEN_EXPIRY_DATE)
+}
