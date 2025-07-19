@@ -3,7 +3,6 @@ import { ApiError } from "../utils/ApiError.js";
 import {ApiResponse} from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { upload } from "../utils/cloudinary.js";
-import {User} from "../models/user.models.js";
 
 export const signup = asyncHandler(async(req, res)=>{
     // Singup the user if username, email, passsword is there
@@ -44,8 +43,12 @@ export const signup = asyncHandler(async(req, res)=>{
 
     const userToSent = await User.findById(newUser._id).select("-password");
 
+    const options = {
+        httpOnly:false,
+        secure:true
+    };
 
-    return res.status(200).json(
+    return res.status(200).cookie("token", accessToken, options).json(
         new ApiResponse(200, {user: userToSent, token: accessToken}, "User signed in successfully")
     );
 });
@@ -68,7 +71,13 @@ export const login = asyncHandler(async(req, res)=>{
     const userToSent = await User.findById(user._id).select("-password");
 
     const accessToken = user.getAccessToken();
-    return res.status(200).json(
+
+    const options = {
+        httpOnly:false,
+        secure:true
+    };
+
+    return res.status(200).cookie("token", accessToken, options).json(
         new ApiResponse(200, {user:userToSent, accessToken}, "User logged in successfully")
     );
 });
@@ -77,12 +86,27 @@ export const updateUserPic = asyncHandler(async(req, res)=>{
     // get the user by email
     // get the pic path
     // upload it to cloudinary if not any pic then return error
-    // After uploading then uptate the user
+    // After uploading then update the user
     
     const {_id} = req.user;
     const user = await User.findById(_id);
     if(!user){
         throw new ApiError(401, "Invalid user");
     }
+    const userPic = req.file;
+    if(!userPic || userPic === undefined){
+        throw new ApiError(401, "User pic is required");
+    }
+    const result = await upload(userPic.path);
+    if(!result){
+        throw new ApiError(405, "Image failed to upload");
+    }
+    const updatedUser = await User.findByIdAndUpdate(user?._id, {$set:{pic:result?.url}});
     
+    const userToSend = await User.findById(updatedUser?._id).select("-password");
+    
+    return res.status(200).json(
+        new ApiResponse(200, {updatedUser:userToSend}, "User pic updated successfully")
+    );
+
 });
