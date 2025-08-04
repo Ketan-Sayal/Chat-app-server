@@ -7,7 +7,8 @@ export const isLoggedIn = async(req, _, next)=>{
     // if user have cookies data then get the data
     // if data is wrong throw error
     // return req.user
-    const token = req.cookies.token || req.headers("token")?.replace("Barrer ", "");
+    const token = req.cookies.token || req.headers['token']?.replace("Barrer ", "");
+    // console.log(token);
     try {
         if(!token){
             throw new ApiError(401, "User must be logged in");

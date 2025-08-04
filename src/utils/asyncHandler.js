@@ -1,8 +1,8 @@
-import {ApiError} from "./ApiError.js"
+import { ApiResponse } from "./ApiResponse.js";
 export const asyncHandler = (fn)=>async(req, res, next)=>{
     try {
         return await fn(req, res, next);
     } catch (error) {
-        res.status(500).json(new ApiError(error?.statusCode || 500, error?.message || "Internal server error"));
+        res.status(error?.statusCode || 500).json(new ApiResponse(error?.statusCode || 500, null, error?.message || "Internal server error"));
     }
 }

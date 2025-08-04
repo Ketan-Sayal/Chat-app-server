@@ -11,7 +11,7 @@ export const signup = asyncHandler(async(req, res)=>{
     // then save the the url to the server
 
     const {username, email, password} = req.body;
-    const pic = req.file;
+    const pic = req?.file;
     if(!email || !username || !password){
         throw new ApiError(401, "All feilds are required");
     }
@@ -56,7 +56,9 @@ export const signup = asyncHandler(async(req, res)=>{
 export const login = asyncHandler(async(req, res)=>{
     // check if user exists if not throw error
     // return the user data
-    const {email, password} = req.body;
+    // console.log(req.body);
+    const {email, password} = req?.body;
+    
     if(!email || !password){
         throw new ApiError(401, "All feilds are required");
     }
@@ -78,7 +80,7 @@ export const login = asyncHandler(async(req, res)=>{
     };
 
     return res.status(200).cookie("token", accessToken, options).json(
-        new ApiResponse(200, {user:userToSent, accessToken}, "User logged in successfully")
+        new ApiResponse(200, {user:userToSent, token:accessToken}, "User logged in successfully")
     );
 });
 
@@ -109,4 +111,11 @@ export const updateUserPic = asyncHandler(async(req, res)=>{
         new ApiResponse(200, {updatedUser:userToSend}, "User pic updated successfully")
     );
 
+});
+
+export const getUser = asyncHandler((req, res)=>{
+    const user = req?.user;
+    // console.log(user);
+    
+    return res.status(200).json(new ApiResponse(200, {user}, "User retrived successfully"));
 });
