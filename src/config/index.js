@@ -1,5 +1,5 @@
 import * as dotenv from "dotenv";
-dotenv.config({path:"../.env"});
+dotenv.config({path:"../.env.local"});
 
 export const config = {
     mongoDbURI: String(process.env.MONGODB_URI),
