@@ -46,7 +46,13 @@ io.on("connection", (socket) => {
 
   // send message to a particular user
   socket.on("new-message", ({user/**Sending message */, user2/**Reciving message */, message})=>{
-    io.to(user2?.socketId).emit("new-message-recived", {user, message});
+    // console.log(message, user2);
+
+    const currUser2 = onlineUsers.find((user)=>user?.mongodbId === user2._id);
+    // console.log("user2: ", currUser2);
+    
+    
+    io.to(currUser2?.socketId).emit("new-message-recived", {user, message});
   });
 
   // User disconnected

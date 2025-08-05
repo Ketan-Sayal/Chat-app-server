@@ -86,6 +86,8 @@ export const getUsersMessages = asyncHandler(async(req, res)=>{
     // If it does exists then find the chats of both of these persons
     const currUser = req.user;
     const otherUserId = req.params.id;
+    // console.log(otherUserId);
+    
     const otherUser = await User.findById(otherUserId);
     if(!otherUser){
         throw new ApiError(402, "Other user doesn't exists");
