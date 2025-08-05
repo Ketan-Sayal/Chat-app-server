@@ -49,10 +49,11 @@ io.on("connection", (socket) => {
     // console.log(message, user2);
 
     const currUser2 = onlineUsers.find((user)=>user?.mongodbId === user2._id);
+    const currUserData = onlineUsers.find((onlineUser)=>onlineUser?.userDetails?.email === user?.email);// Sending user data
     // console.log("user2: ", currUser2);
     
     
-    io.to(currUser2?.socketId).emit("new-message-recived", {user, message});
+    io.to(currUser2?.socketId).emit("new-message-recived", {user:currUserData, message});
   });
 
   // User disconnected
