@@ -42,7 +42,7 @@ io.on("connection", (socket) => {
     if(!isUserExisting){
       onlineUsers.push(newUser);
     }
-    io.emit("get-online-users", {users:onlineUsers, disconnectedUser:null});
+    io.emit("get-online-users", {users:onlineUsers, disconnectedUser:null, newUser});
   });
 
   // send message to a particular user
@@ -62,7 +62,7 @@ io.on("connection", (socket) => {
   socket.on("disconnect", ()=>{
     const disconnectedUser = onlineUsers?.find((onlineUser)=>onlineUser?.socketId === socket.id);
     onlineUsers = onlineUsers.filter((user)=>user.socketId!==socket.id);
-    io.emit("get-online-users", {users:onlineUsers, disconnectedUser});
+    io.emit("get-online-users", {users:onlineUsers, disconnectedUser, newUser:null});
     
   })
 
