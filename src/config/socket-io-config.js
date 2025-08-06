@@ -51,7 +51,8 @@ io.on("connection", (socket) => {
 
     const currUser2 = onlineUsers.find((user)=>user?.mongodbId === user2._id);
     const currUserData = onlineUsers.find((onlineUser)=>onlineUser?.userDetails?.email === user?.email);// Sending user data
-    // console.log("user2: ", currUser2);
+    
+    console.log("user2: ", currUser2);// for delay of messaging[removing can cuse bugs]
     
     
     io.to(currUser2?.socketId).emit("new-message-recived", {user:currUserData, message});
