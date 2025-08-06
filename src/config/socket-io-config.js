@@ -31,6 +31,7 @@ io.on("connection", (socket) => {
     const newUser = {
       socketId:socket?.id,
       mongodbId:data?._id,
+      unreadMessages:0,
       userDetails:{
         username:data?.username,
         email:data?.email,
@@ -41,7 +42,7 @@ io.on("connection", (socket) => {
     if(!isUserExisting){
       onlineUsers.push(newUser);
     }
-    io.emit("get-online-users", onlineUsers);
+    io.emit("get-online-users", {users:onlineUsers, disconnectedUser:null});
   });
 
   // send message to a particular user
@@ -58,8 +59,9 @@ io.on("connection", (socket) => {
 
   // User disconnected
   socket.on("disconnect", ()=>{
+    const disconnectedUser = onlineUsers?.find((onlineUser)=>onlineUser?.socketId === socket.id);
     onlineUsers = onlineUsers.filter((user)=>user.socketId!==socket.id);
-    io.emit("get-online-users", onlineUsers);
+    io.emit("get-online-users", {users:onlineUsers, disconnectedUser});
     
   })
 
