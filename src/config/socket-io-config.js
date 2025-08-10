@@ -64,6 +64,57 @@ io.on("connection", (socket) => {
     onlineUsers = onlineUsers.filter((user)=>user.socketId!==socket.id);
     io.emit("get-online-users", {users:onlineUsers, disconnectedUser, newUser:null});
     
+  });
+
+  // video calling part
+  socket.on("new-video-call", (data)=>{
+    const sender = onlineUsers.find((onlineUser)=>onlineUser?.mongodbId === data?.user?._id);
+    const reciver = onlineUsers.find((onlineUser)=>onlineUser?.mongodbId === data?.user2?._id);
+    io.to(reciver?.socketId).emit("video-call-notification", {sender});
+  });
+
+  socket.on("accepted-call", (participants)=>{
+    const reciver = onlineUsers.find((onlineUser)=>onlineUser?.mongodbId === participants?.caller?.mongodbId);
+    const sender = onlineUsers.find((onlineUser)=>onlineUser?.mongodbId === participants?.reciver?._id);
+    const sendParticipants = {
+      caller:reciver,
+      reciver:sender
+    }
+    io.to(reciver?.socketId).emit("peer-to-peer", {sender, signalData:null, participants:sendParticipants});
+  });
+
+  socket.on("peer-to-peer", (data)=>{
+    const sender = onlineUsers.find((onlineUser)=>onlineUser?.mongodbId === data?.user?._id);
+    const reciver = onlineUsers.find((onlineUser)=>onlineUser?.mongodbId === data?.user2?.mongodbId);
+    
+    // console.log("sender, reciver: ", sender, reciver);
+    
+    io.to(reciver?.socketId).emit("peer-to-peer", {sender, signalData:data?.signalData, participants:data?.participants});
+  });
+
+
+  socket.on("toggle-video", (data)=>{
+    const sender = onlineUsers.find((onlineUser)=>onlineUser?.mongodbId === data?.user?._id);
+    const reciver = onlineUsers.find((onlineUser)=>onlineUser?.mongodbId === data?.user2?.mongodbId);
+    io.to(reciver?.socketId).emit("toggle-video", null);
+  });
+
+  socket.on("toggle-audio", (data)=>{
+    const sender = onlineUsers.find((onlineUser)=>onlineUser?.mongodbId === data?.user?._id);
+    const reciver = onlineUsers.find((onlineUser)=>onlineUser?.mongodbId === data?.user2?.mongodbId);
+    io.to(reciver?.socketId).emit("toggle-audio", null);
+  });
+
+  socket.on("end-call", (data)=>{
+    const sender = onlineUsers.find((onlineUser)=>onlineUser?.mongodbId === data?.user?._id);
+    const reciver = onlineUsers.find((onlineUser)=>onlineUser?.mongodbId === data?.user2?.mongodbId);
+    io.to(reciver?.socketId).emit("end-call", null);
+  });
+
+  socket.on("call-notification-rejected", (data)=>{
+    const sender = onlineUsers.find((onlineUser)=>onlineUser?.mongodbId === data?.user?._id);
+    const reciver = onlineUsers.find((onlineUser)=>onlineUser?.mongodbId === data?.user2?.mongodbId);
+    io.to(reciver?.socketId).emit("call-notification-rejected", null);
   })
 
   
