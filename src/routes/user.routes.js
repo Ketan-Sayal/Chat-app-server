@@ -13,4 +13,6 @@ router.route("/update-pic").post(isLoggedIn, updateUserPic);
 
 router.route("/user/info").get(upload.none(), isLoggedIn, getUser);
 
+// router.route("/userEmail/sum/:email").get(addUserEmailNums);
+
 export default router;

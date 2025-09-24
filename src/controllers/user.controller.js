@@ -119,3 +119,19 @@ export const getUser = asyncHandler((req, res)=>{
     
     return res.status(200).json(new ApiResponse(200, {user}, "User retrived successfully"));
 });
+
+// export const addUserEmailNums= asyncHandler((req, res)=>{
+//     const email = req.params.email;
+//     const user = User.findOne({email:email});
+//     if(!user)throw new ApiError(403, "User doesn't exists");
+
+//     let sum = 0;
+//     for(let i = 0; i<email.length; i++){
+//         if(!isNaN(email[i])){
+//             sum+=parseInt(email[i]);
+//         }
+//     }
+//     return res.status(200).json(new ApiResponse(200, {
+//         sum
+//     }, "Sum is sent!!!"));
+// });
